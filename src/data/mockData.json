@@ -1,0 +1,53 @@
+{
+  "mock_users": [
+    {
+      "email": "khoa.it.umt@gmail.com",
+      "password_plaintext": "123456",
+      "first_name": "Khoa",
+      "middle_name": "Hà Đăng",
+      "last_name": "Nguyễn",
+      "user_role": "Member"
+    }
+  ],
+  "mock_vehicles": [
+    {
+      "user_email": "member@domain.com",
+      "model_id": 3,
+      "plate_number": "51G-123.45",
+      "current_fuel_liters": 15.50,
+      "current_odo_km": 14850
+    },
+    {
+      "user_email": "khoa.it.umt@gmail.com",
+      "model_id": 1,
+      "plate_number": "59UMT-888.88",
+      "current_fuel_liters": 3.50,
+      "current_odo_km": 1200
+    }
+  ],
+  "mock_fuel_logs": [
+    {
+      "vehicle_plate": "59UMT-888.88",
+      "total_cost": 100000,
+      "liters_calculated": 4.08,
+      "status": "Approved"
+    }
+  ],
+  "mock_trips": [
+    {
+      "vehicle_plate": "59UMT-888.88",
+      "distance_km": 15.0,
+      "weather": "Rain",
+      "road_condition": "Normal",
+      "is_heavy_traffic": true
+    }
+  ],
+  "mock_notifications": [
+    {
+      "user_email": "khoa.it.umt@gmail.com",
+      "type": "Maintenance_Reminder",
+      "title": "Sắp đến hạn thay nhớt",
+      "message": "Xe 59UMT-888.88 đã chạy được 1200km. Vui lòng kiểm tra nhớt định kỳ."
+    }
+  ]
+}

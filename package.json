@@ -1,0 +1,39 @@
+{
+  "name": "our-fuel-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "docker:start": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "docker:restart": "docker restart fuel_backend",
+    "docker:build": "docker-compose up -d --build",
+    "docker:logs": "docker logs -f fuel_backend --tail 10",
+    "docker:build_new": "docker-compose up --build -d",
+    "seeds": "node db/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@apollo/server": "^4.13.0",
+    "@as-integrations/express5": "^1.1.2",
+    "axios": "^1.16.1",
+    "bcryptjs": "^3.0.3",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "graphql": "^16.14.0",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.3",
+    "node-cron": "^4.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

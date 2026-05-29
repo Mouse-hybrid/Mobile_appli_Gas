@@ -1,0 +1,43 @@
+services:
+  # 1. DỊCH VỤ DATABASE (MYSQL 8.0) - Đưa lên trên để khởi tạo trước
+  fuel_database:
+    image: mysql:8.0
+    container_name: fuel_database
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=smart_fuel_tracker
+    volumes:
+      - db_data:/var/lib/mysql
+    # THÊM KHỐI NÀY: Khám sức khỏe Database liên tục xem đã dậy chưa
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. DỊCH VỤ BACKEND (NODE.JS)
+  our-fuel-backend:
+    build: .
+    container_name: fuel_backend
+    ports:
+      - "6500:6500"
+    environment:
+      - PORT=6500
+      - DB_HOST=fuel_database
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=123456
+      - DB_NAME=smart_fuel_tracker
+      - JWT_SECRET=khoa_bi_mat_de_tao_token_cho_nhom_8
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      # THÊM ĐIỀU KIỆN NÀY: Chỉ chạy Backend khi Database báo đã khỏe mạnh
+      fuel_database:
+        condition: service_healthy
+
+volumes:
+  db_data:

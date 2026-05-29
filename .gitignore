@@ -1,0 +1,54 @@
+# Node dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-error.log
+
+# Runtime / build output
+dist/
+build/
+coverage/
+tmp/
+temp/
+
+# Environment
+.env
+.env.*.local
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Docker
+docker-compose.override.yml
+
+# Certificates - ignore private keys and sensitive cert files
+certs/*.key
+certs/*.pem
+certs/*.p12
+
+# Database binaries (keep .sql files tracked)
+*.sqlite
+*.db
+db/*.sqlite
+db/*.db
+
+# Uploaded files / temp uploads
+uploads/
+tmp_uploads/
+
+# Misc
+*.seed
+*.pid
+*.swp
+
+# Optional: lockfiles (uncomment if you prefer not to track them)
+# package-lock.json
+# yarn.lock
+
+# Keep project SQL and other source files tracked (do not ignore .sql files)
