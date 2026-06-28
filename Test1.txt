@@ -1,17 +1,20 @@
-# ==========================================================
-# HỆ THỐNG SMART FUEL TRACKER - KỊCH BẢN KIỂM THỬ TOÀN DIỆN (ĐÃ ĐỒNG BỘ)
-# Tài khoản kiểm thử mới: Trần Văn B
-# ==========================================================
+# ==============================================================================
+# HỆ THỐNG SMART FUEL TRACKER - KỊCH BẢN KIỂM THỬ TOÀN DIỆN MỚI NHẤT (ĐÃ ĐỒNG BỘ)
+# Tài khoản kiểm thử: Trần Văn B (tranvanb.test@gmail.com)
+# Cơ chế: Tự tính toán nhiên liệu thông minh & Kiểm tra trùng biển số xe
+# Phiên bản: Tích hợp định vị thương mại Geoapify & Phát hiện Anomaly cảnh báo rò rỉ
+# Đối tượng xe test: Xe máy Xăng (Honda Winner X - Bình xăng 4.5 Lít)
+# ==============================================================================
 
-# ----------------------------------------------------------
-# GIAI ĐOẠN 1: ĐĂNG KÝ VÀ PHÊ DUYỆT TÀI KHOẢN
-# ----------------------------------------------------------
+# ------------------------------------------------------------------------------
+# GIAI ĐOẠN 1: ĐĂNG KÝ VÀ PHÊ DUYỆT TÀI KHOẢN THÀNH VIÊN
+# ------------------------------------------------------------------------------
 
-# Bước 1: Người dùng mới Tiến hành Đăng ký
-# Kết quả: Tạo tài khoản với vai trò mặc định ban đầu là "Guest"
+# Bước 1: Người dùng Trần Văn B tiến hành đăng ký tài khoản mới
+# Kết quả mong đợi: Tạo tài khoản thành công, vai trò mặc định ban đầu là "Guest"
 mutation RegisterNewUser {
   register(
-    email: "tranvanb.test@domain.com",
+    email: "tranvanb.test@gmail.com",
     password: "password123",
     first_name: "B",
     middle_name: "Văn",
@@ -27,7 +30,7 @@ mutation RegisterNewUser {
   }
 }
 
-# Bước 2: Admin Đăng nhập vào hệ thống để lấy quyền điều hành
+# Bước 2: Admin hệ thống đăng nhập để lấy quyền điều hành duyệt thành viên
 mutation LoginAsAdmin {
   login(email: "admin@domain.com", password: "123456") {
     token
@@ -38,20 +41,20 @@ mutation LoginAsAdmin {
   }
 }
 
-# Bước 3: Admin duyệt nâng cấp tài khoản Guest lên thành Member
-# (Yêu cầu: Lấy Token từ Bước 2 dán vào Header "Authorization: Bearer <TOKEN>")
+# Bước 3: Admin phê duyệt nâng cấp tài khoản từ Guest lên thành Member chính thức
+# (Yêu cầu: Lấy mã Token từ "LoginAsAdmin" ở Bước 2 dán vào mục Headers: Authorization: Bearer <TOKEN>)
 mutation VerifyUserToMember {
-  verifyAccount(email: "tranvanb.test@domain.com")
+  verifyAccount(email: "tranvanb.test@gmail.com")
 }
 
 
-# ----------------------------------------------------------
-# GIAI ĐOẠN 2: THAO TÁC NGHIỆP VỤ (DÙNG TÀI KHOẢN MEMBER)
-# ----------------------------------------------------------
+# ------------------------------------------------------------------------------
+# GIAI ĐOẠN 2: THAO TÁC NGHIỆP VỤ PHƯƠNG TIỆN VÀ HÀNH TRÌNH (QUYỀN MEMBER)
+# ------------------------------------------------------------------------------
 
-# Bước 4: Member mới (đã được duyệt) tiến hành đăng nhập lại để lấy Token quyền lực
+# Bước 4: Tài khoản Trần Văn B (sau khi được duyệt) đăng nhập lại để lấy Token quyền lực
 mutation LoginAsMember {
-  login(email: "tranvanb.test@domain.com", password: "password123") {
+  login(email: "tranvanb.test@gmail.com", password: "password123") {
     token
     user {
       id
@@ -60,17 +63,18 @@ mutation LoginAsMember {
     }
   }
 }
+# (⚠️ LƯU Ý TỪ BƯỚC NÀY TRỞ ĐI: Copy mã Token của Member ở Bước 4 dán đè vào mục Headers Sandbox)
 
-# Bước 5: Thêm phương tiện mới vào gara (Hỗ trợ phân loại Xăng / Điện / Dầu)
-# (Yêu cầu: Gắn Token từ Bước 4 vào Header Sandbox)
+# Bước 5a: Thành viên thêm phương tiện mới vào nhà xe (Đã cấu hình chuẩn xe chạy Xăng)
 mutation AddNewVehicle {
   addVehicle(
-    plate_number: "51G-999.99",
-    vehicle_name: "Ford Ranger Wildtrak 2024",
-    current_odo_km: 5000,
-    standard_consumption: 8.5,
-    fuel_tank_capacity: 80.0,
-    fuel_type: "Dầu"
+    plate_number: "59G-934.99",
+    vehicle_name: "Honda Winner X",
+    current_odo_km: 0,
+    standard_consumption: 1.98,
+    fuel_tank_capacity: 4.5,
+    fuel_type: "Xăng",
+    engine_cc: 150
   ) {
     id
     plate_number
@@ -79,22 +83,101 @@ mutation AddNewVehicle {
   }
 }
 
-# Bước 6: Nhật ký nạp nhiên liệu (Đổ xăng/dầu)
-mutation CreateFuelLog {
-  addFuelLog(
-    vehicle_id: "4", 
-    liters: 45.0,
-    total_price: 1100000,
-    odo_at_fill: 5050
+# 🧪 Bước 5b (TEST LỖI TRÙNG BIỂN SỐ): Chạy lại chính Mutation trên một lần nữa với cùng biển số
+# Kết quả mong đợi: Hệ thống chặn đứng hành vi ghi đè và trả về thông báo lỗi: "đã có sẵn"
+mutation AddDuplicateVehicleTest {
+  addVehicle(
+    plate_number: "59G-934.99",
+    vehicle_name: "Honda Winner X Bản Trùng",
+    current_odo_km: 0,
+    standard_consumption: 1.98,
+    fuel_tank_capacity: 4.5,
+    fuel_type: "Xăng",
+    engine_cc: 150
   ) {
     id
-    liters
+    plate_number
+  }
+}
+
+# 🧪 Bước 5c (KIỂM THỬ MỞ RỘNG): Thử nghiệm Form hiệu chỉnh thông tin xe của trang Admin
+# (Giả lập cập nhật mở rộng: Nâng phân khối xe lên 155cc, đổi tên dòng xe và gắn kèm link ảnh đại diện)
+mutation UpdateVehicleSpecifications {
+  updateVehicle(
+    id: "4",
+    vehicle_name: "Honda Winner X V3 Enhanced",
+    plate_number: "59G-934.99",
+    standard_consumption: 1.95,
+    fuel_tank_capacity: 4.5,
+    fuel_type: "Xăng",
+    engine_cc: 155,
+    image_url: "https://example.com/winnerx_v3.png"
+  ) {
+    id
+    plate_number
+    vehicle_name
+    image_url
+    model {
+      engine_cc
+      standard_consumption
+      fuel_tank_capacity
+    }
+  }
+}
+
+# 🧪 Bước 6a: Nhật ký nạp nhiên liệu dạng THAY ĐỔI LINH HOẠT - CHỈ NHẬP SỐ TIỀN
+# (Hệ thống tự động nhận diện xe máy Xăng, bốc giá RON 95 là 24.500đ/L từ DB để quy đổi ra vừa vặn 4 Lít)
+mutation CreateFuelLogByPrice {
+  addFuelLog(
+    vehicle_id: "4", 
+    total_price: 98000,     # Nhập 98.000 VNĐ (Không truyền tham số liters để test bộ quy đổi)
+    odo_at_fill: 50
+  ) {
+    id
+    liters                  # Hệ thống sẽ tự động tính và trả về: 4.0 Lít
     total_price
     log_date
   }
 }
 
-# Bước 7: Khởi tạo chuyến đi mới (Bắt đầu theo dõi hành trình)
+# 🧪 Bước 6b: Nhật ký nạp nhiên liệu dạng THAY ĐỔI LINH HOẠT - CHỈ NHẬP SỐ LÍT
+# (Hệ thống tự lấy 4 Lít nhân với giá xăng RON 95 trong cấu hình hệ thống để tự tính ra số tiền thanh toán)
+mutation CreateFuelLogByLiters {
+  addFuelLog(
+    vehicle_id: "4", 
+    liters: 4.0,            # Nhập 4.0 Lít (Không truyền tham số total_price)
+    odo_at_fill: 150
+  ) {
+    id
+    liters
+    total_price             # Hệ thống sẽ tự động nhân ra và trả về: 98000 VNĐ
+    log_date
+  }
+}
+
+# 📊 Bước 7a: Dự toán nhiên liệu đường dài & Tự gợi ý trạm xăng khi hụt bình chứa
+# (Kiểm thử nâng cao: Đoạn đường 650km chắc chắn Winner X không đủ xăng, hệ thống sẽ gọi Geoapify quét trạm xăng)
+query PreTripFuelEstimation {
+  estimateRequiredFuel(
+    vehicle_id: "4", 
+    distance_km: 650.0, 
+    latitude: 10.787501, 
+    longitude: 106.728739
+  ) {
+    base_fuel_liters
+    estimated_fuel_liters
+    current_fuel_liters
+    is_enough               # Trả về False vì 650km vượt quá dung tích 4.5L của Winner X
+    suggested_stations {    # 🌟 ĐỊA LÝ THỰC TẾ: Tự động đề xuất các trạm xăng thật xung quanh đường Trần Não
+      id
+      name
+      address
+      distance_km
+    }
+  }
+}
+
+# Bước 7b: Khởi tạo hành trình di chuyển (Bật trạm định vị)
 mutation StartTrip {
   startTrip(vehicle_id: "4") {
     id
@@ -104,11 +187,10 @@ mutation StartTrip {
   }
 }
 
-# Bước 8: Bắn liên tiếp các tọa độ Live dọc đường (Giai đoạn xe di chuyển ngoài đường)
-
-# 📍 Điểm số 1: Vừa lăn bánh
+# Bước 8: Giai đoạn xe di chuyển - Đẩy tọa độ GPS liên tiếp về Backend
+# 📍 Tọa độ điểm số 1
 mutation LogWaypoint1 {
-  logTripWaypoint(trip_id: "3", latitude: 10.7769, longitude: 106.7009, current_speed_kmh: 30.5) {
+  logTripWaypoint(trip_id: "3", latitude: 10.7769, longitude: 106.7009, current_speed_kmh: 35.0) {
     id
     current_speed_kmh
     weather_condition
@@ -116,48 +198,77 @@ mutation LogWaypoint1 {
   }
 }
 
-# 📍 Điểm số 2: Tăng tốc
+# 📊 Bước 8b (QUÉT MAP THEO GPS ĐỘNG): Tìm trạm xăng lân cận quanh xe ngoài thực địa
+query GetDynamicNearbyGasStations {
+  getNearbyGasStations(latitude: 10.7769, longitude: 106.7009) {
+    id
+    name
+    address
+    distance_km
+    latitude
+    longitude
+  }
+}
+
+# 📍 Tọa độ điểm số 2
 mutation LogWaypoint2 {
-  logTripWaypoint(trip_id: "3", latitude: 10.7780, longitude: 106.7025, current_speed_kmh: 45.0) {
+  logTripWaypoint(trip_id: "3", latitude: 10.787501, longitude: 106.728739, current_speed_kmh: 50.2) {
     id
     current_speed_kmh
     weather_condition
   }
 }
 
-# 📍 Điểm số 3: Dừng đèn đỏ
-mutation LogWaypoint3 {
-  logTripWaypoint(trip_id: "3", latitude: 10.7795, longitude: 106.7040, current_speed_kmh: 0.0) {
-    id
-    current_speed_kmh
-  }
-}
-
-# 🌟 Bước 9: Kết thúc chuyến đi (Đồng bộ tên nhãn bọc thành EndTrip theo Schema Backend)
+# Bước 9: Kết thúc hành trình & Kiểm tra thuật toán phân tích hành vi tiêu hao (Anomaly)
 mutation EndTrip {
   endTrip(
     trip_id: "3",
-    distance_km: 15.5,
+    distance_km: 25.5,
     is_heavy_traffic: true,
-    end_lat: 10.7769,
-    end_lon: 106.7009,
-    road_condition: "Normal",
-    braking_type: "Normal",
-    avg_speed_kmh: 40.0,
-    acceleration_pattern: "Normal"
+    end_lat: 10.787501,
+    end_lon: 106.728739,
+    road_condition: "Rough",
+    braking_type: "Hard",
+    avg_speed_kmh: 18.0,
+    
+    # 🌟 HƯỚNG DẪN CẤU HÌNH MẪU GIA TỐC (MEMBER/ADMIN TỰ CHỈNH TRÊN SANDBOX ĐỂ PHỤC VỤ KIỂM THỬ):
+    # ------------------------------------------------------------------------------------------
+    # 🔹 CHẾ ĐỘ 1: "Normal" hoặc "Constant" hoặc "Uniform_Accelerating" -> Lái an toàn
+    #    -> Hệ số phạt tiêu thụ thấp, lượng xăng đốt nằm trong ngưỡng lý thuyết của Winner X.
+    #    -> HỆ THỐNG TRẢ VỀ: has_anomaly: false (Trang Web Admin sẽ hiển thị nhãn "An toàn" màu xanh).
+    #
+    # 🔹 CHẾ ĐỘ 2: "Aggressive" hoặc "Accelerating" -> Lái gắt, phóng nhanh phanh gấp
+    #    -> Bộ não `speedBehaviorAnalyzer` phạt x1.25 xăng, đẩy tổng tiêu thụ vượt ngưỡng an toàn 60%.
+    #    -> HỆ THỐNG TRẢ VỀ: has_anomaly: true (Trang Web Admin hiển thị nút "⚠️ Bất thường" màu đỏ).
+    #
+    # 💡 LƯU Ý THỰC TẾ: Trên ứng dụng Flutter Mobile chạy ngoài đường, trường này sẽ do thuật toán Front-End 
+    #    tự suy ra từ biến thiên vận tốc GPS từng giây của cảm biến máy rồi tự bắn lên, người dùng không tự chọn.
+    acceleration_pattern: "Aggressive" 
   ) {
     id
     status
     total_distance_km
     estimated_fuel_liters
+    has_anomaly             # Sẽ trả về True/False bám sát theo cấu hình chuỗi pattern bạn chọn ở trên
   }
 }
 
-# Bước 10: Tra cứu báo cáo cá nhân sau chuyến đi
+# Bước 10: Xem bảng thống kê cá nhân (Dashboard) tổng hợp sau chuyến đi
 query GetUserDashboard {
   getMyDashboardStats {
     total_vehicles
     total_distance_km
     total_fuel_cost
+  }
+}
+
+# 🔔 Bước 11: Kiểm tra hộp thư cảnh báo rò rỉ/hao hụt của tài xế
+query CheckAnomalyNotifications {
+  getMyNotifications {
+    id
+    type                    # Sẽ xuất hiện loại thông báo "Anomaly_Alert" để UI Mobile hiển thị cảnh báo đỏ
+    title
+    message
+    is_read
   }
 }

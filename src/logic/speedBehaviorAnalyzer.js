@@ -30,11 +30,15 @@ const analyzeSpeedBehavior = (acceleration_pattern) => {
             fuel_multiplier = 1.0; // Tiêu thụ chuẩn
             wear_multiplier = 1.0;
             break;
-        case 'Accelerating': // Nhanh dần (Thốc ga lộn xộn)
+            
+        // 🎯 ĐÃ VÁ LỖI: Gom cụm cả 2 từ khóa để Sandbox truyền nhãn nào hệ thống cũng hiểu
+        case 'Accelerating': 
+        case 'Aggressive': // Nhanh dần (Thốc ga lộn xộn / Lái gắt)
             behavior_label = 'Aggressive';
             fuel_multiplier = 1.25; // Hao xăng mạnh
             wear_multiplier = 1.20; // Hại động cơ
             break;
+            
         default:
             behavior_label = 'Normal';
             break;

@@ -175,3 +175,6 @@ ADD COLUMN traffic_density ENUM('Light', 'Normal', 'Heavy') DEFAULT 'Normal' COM
 
 ALTER TABLE vehicle_models
 ADD COLUMN image_url VARCHAR(255) COMMENT 'Ảnh minh họa gốc của dòng xe này';
+
+ALTER TABLE payment_transactions 
+ADD COLUMN token VARCHAR(255) NULL COMMENT 'Mã token xác thực qua Email Premium';
